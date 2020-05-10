@@ -87,6 +87,7 @@ THEME_SHOW_SCM=${THEME_SHOW_SCM:-"true"}
 THEME_SHOW_EXITCODE=${THEME_SHOW_EXITCODE:-"false"}
 THEME_SHOW_NODE=${THEME_SHOW_NODE:-"false"}
 THEME_SHOW_PYTHON=${THEME_SHOW_PYTHON:-"false"}
+THEME_SHOW_VIRTUAL_ENV=${THEME_SHOW_VIRTUAL_ENV:-"false"}
 THEME_SHOW_TODO=${THEME_SHOW_TODO:-"false"}
 THEME_SHOW_CLOCK=${THEME_SHOW_CLOCK:-"false"}
 THEME_SHOW_BATTERY=${THEME_SHOW_BATTERY:-"false"}
@@ -110,7 +111,7 @@ __YONCE_PROMPT_CHAR_PS1=${THEME_PROMPT_CHAR_PS1:-"└"}
 __YONCE_PROMPT_CHAR_PS2=${THEME_PROMPT_CHAR_PS2:-"└"}
 
 ___YONCE_PREFIX=${___YONCE_PREFIX:-"lyric"}
-___YONCE_TOP_LEFT=${___YONCE_TOP_LEFT:-"user host dir scm"}
+___YONCE_TOP_LEFT=${___YONCE_TOP_LEFT:-"user host dir scm virtualenv"}
 ___YONCE_TOP_RIGHT=${___YONCE_TOP_RIGHT:-"exitcode node python todo clock battery"}
 ___YONCE_BOTTOM=${___YONCE_BOTTOM:-"char"}
 
@@ -201,6 +202,20 @@ ____yonce_top_left_parse() {
 		_TOP_LEFT+="${args[2]}${args[4]}"
 	fi
 	_TOP_LEFT+=" "
+	# ifs_old="${IFS}"
+	# IFS="|"
+	# args=( $1 )
+	# IFS="${ifs_old}"
+	# _TOP_RIGHT+=" "
+	# if [ -n "${args[3]}" ]; then
+	# 	_TOP_RIGHT+="${args[2]}${args[3]}"
+	# fi
+	# _TOP_RIGHT+="${args[0]}${args[1]}"
+	# if [ -n "${args[4]}" ]; then
+	# 	_TOP_RIGHT+="${args[2]}${args[4]}"
+	# fi
+	# __TOP_RIGHT_LEN=$(( __TOP_RIGHT_LEN + ${#args[1]} + ${#args[3]} + ${#args[4]} + 1 ))
+	# (( __SEG_AT_RIGHT += 1 ))
 }
 
 ____yonce_top_right_parse() {
@@ -314,6 +329,17 @@ ___yonce_prompt_dir() {
 	printf "%s|%s" "${separator}" "${icon}" "${info}"
 }
 
+___yonce_prompt_virtualenv() {
+	if test -z ${VIRTUAL_ENV} ; then
+      PYTHON_VIRTUALENV=""
+  	else
+	  icon="${white} "
+	  info="${THEME_COLOR_CWD} (`basename \"${VIRTUAL_ENV}\"`)"
+	  separator="${white} "
+	  printf "%s|%s" "${separator}" "${icon}" "${info}"
+ 	fi
+}
+
 ___yonce_prompt_scm() {
 	[ "${THEME_SHOW_SCM}" != "true" ] && return
 	box="$(scm_char) "
@@ -328,6 +354,8 @@ ___yonce_prompt_python() {
 	info=" $(python_version_prompt)"
 	printf "%s|%s|%s|%s" "${color}" "${info}" "${bold_blue}" "${box}"
 }
+
+
 
 ___yonce_prompt_node() {
 	[ "${THEME_SHOW_NODE}" != "true" ] && return
